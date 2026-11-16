@@ -24,6 +24,7 @@ Fuimos ordenando todo el trabajo de la siguiente manera:
         ├── rvv_add_intrinsic.cc               ← [oficial] suma vectorial con intrínsecos RVV
         ├── coralnpu_v2_scalar_bias_relu.cc    ← [propio] prueba escalar: bias + ReLU
         ├── coralnpu_v2_rvv_quantized_scale.cc ← [propio] prueba vectorial: escalado cuantizado
+        ├── coralnpu_v2_matrix_mac_dot.cc      ← [propio] prueba matricial: producto punto MAC
         └── mi_proyecto_npu/                   ← [propio] nuestro proyecto final con imágenes
             ├── BUILD
             ├── main.c                         ← junta las 3 etapas (escalar, SIMD, MAC)
@@ -43,7 +44,7 @@ Para que se entienda bien todo lo que hicimos desde el día uno hasta que logram
    * **Para tener en cuenta:** Si van a probar nuestros códigos, asegúrense de tener la carpeta del proyecto en `~/coralnpu` con las mismas rutas que dejamos en esta guía.
 2. **`02_Informe_Ejemplos_CoralNPU.pdf`**
    * **Lo que pusimos aquí:** Explicamos con nuestras palabras cómo trabajan las tres partes principales de la NPU (Escalar, Vectorial y Matricial). También mostramos cómo guardamos los datos en la memoria DTCM, comentamos nuestros códigos y pegamos los pantallazos de las pruebas pasando en Verilator.
-   * **Para tener en cuenta:** Fíjense en cómo metimos los arreglos dentro de la sección `.data` (DTCM) y en las cuentas que hicimos para comprobar que cada ejercicio (`scalar_bias_relu`, `rvv_quantized_scale` y el filtro de fotos) diera el resultado exacto.
+   * **Para tener en cuenta:** Fíjense en cómo metimos los arreglos dentro de la sección `.data` (DTCM) y en las cuentas que hicimos para comprobar que cada ejercicio (`scalar_bias_relu`, `rvv_quantized_scale`, `matrix_mac_dot` y el filtro de fotos) diera el resultado exacto.
 3. **`03_Documentacion_Completa_CoralNPU.pdf`**
    * **Lo que pusimos aquí:** Juntamos toda la investigación en un documento general explicando cómo es el hardware de la CoralNPU V2 por dentro, cómo viajan las instrucciones y nuestras conclusiones.
    * **Para tener en cuenta:** Revisen la tabla comparativa del final, donde mostramos la diferencia real entre hacer las operaciones de forma escalar, vectorial o matricial.
@@ -107,8 +108,25 @@ Aquí quisimos probar las instrucciones vectoriales de RISC-V (RVV) haciendo var
 
 ---
 
-### 4. Nuestro Proyecto Final — Procesamiento de Fotos (`examples/mi_proyecto_npu/`)
-Para cerrar el trabajo quisimos hacer algo mucho más visual que solo listas de números. Armamos un programa que pone a trabajar las 3 partes de la NPU (Escalar, Vectorial y Matricial) sobre una foto real de **$512 \times 512$ píxeles a color** (`aaaaaaa.jpg`).
+### 4. Nuestro Ejercicio 3 — Parte Matricial (`coralnpu_v2_matrix_mac_dot.cc`)
+En este tercer código probamos el corazón matemático de la NPU: las operaciones de multiplicación y acumulación (**MAC**, *Multiply-Accumulate*) usando nuestra librería `coralnpu_math.h`. Con esto calculamos productos punto entre filas y columnas de matrices, que es la operación base que usan todas las redes neuronales.
+
+* **Para compilarlo:**
+
+      bazel build //examples:coralnpu_v2_matrix_mac_dot
+
+* **Para correr la simulación en Verilator:**
+
+      bazel test --test_output=all //examples:verilator_uvm_regression_coralnpu_v2_matrix_mac_dot
+
+* **Lo que hay que mirar:**
+  * Revisen cómo llamamos las estructuras y funciones matriciales definidas dentro de `examples/coralnpu_math.h` y cómo los datos entran y salen de la memoria **DTCM**.
+  * Verificar que los productos punto acumulados coincidan con el cálculo manual y que la simulación RTL en Verilator finalice con **`PASSED`**.
+
+---
+
+### 5. Nuestro Proyecto Final — Procesamiento de Fotos (`examples/mi_proyecto_npu/`)
+Para cerrar el trabajo quisimos hacer algo mucho más visual que solo listas de números. Armamos un programa que junta las 3 partes de la NPU (Escalar, Vectorial y Matricial) sobre una foto real de **$512 \times 512$ píxeles a color** (`aaaaaaa.jpg`).
 
 * **Compilación del código C de la NPU:**
 
