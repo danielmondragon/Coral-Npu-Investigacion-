@@ -1,21 +1,24 @@
-Coral-Npu-Investigacion-/
-├── README.md                              ← este archivo
-├── docs/                                  ← 📄 LOS 3 PDF (leer en orden 1 → 2 → 3)
-│   ├── 01_Guia_Instalacion_CoralNPU.pdf
-│   ├── 02_Informe_Ejemplos_CoralNPU.pdf
-│   └── 03_Documentacion_Completa_CoralNPU.pdf
-└── examples/                              ← se copia dentro de ~/coralnpu/examples
-    ├── BUILD.bazel                        ← reglas Bazel: 2 ejemplos oficiales + 3 propios
-    ├── BUILD                              ← versión reducida (solo scalar_bias_relu)
-    ├── coralnpu_math.h                    ← librería propia (tipos y operaciones MAC)
-    ├── hello_world_add_floats.cc          ← [oficial] suma escalar de flotantes
-    ├── rvv_add_intrinsic.cc               ← [oficial] suma vectorial con intrínsecos RVV
-    ├── coralnpu_v2_scalar_bias_relu.cc    ← [propio] escalar: bias + ReLU
-    ├── coralnpu_v2_rvv_quantized_scale.cc ← [propio] vectorial: escalado cuantizado
-    └── mi_proyecto_npu/                   ← [propio] proyecto integrador de imágenes
-        ├── BUILD
-        ├── main.c                         ← orquesta las 3 etapas (escalar, SIMD, MAC)
-        ├── coralnpu_math.h                ← funciones de filtros de imagen
-        ├── testbench_pipeline_img.py      ← testbench Python: carga la foto y genera el dashboard
-        ├── aaaaaaa.jpg                    ← imagen de entrada
-        └── resultado_pipeline_propio.png  ← resultado: 6 filtros aplicados
+# Práctica 1: Programación y Control de un Manipulador UR5
+
+Este repositorio contiene los archivos y scripts desarrollados para la programación de un robot colaborativo **UR5** utilizando el simulador **URSim CB3 (PolyScope)** y su integración con **ROS 2 Jazzy** para control externo.
+
+## 👥 Integrantes
+* Alejandra Calderon Zambrana
+* Andy Joel Herrera Mejía
+
+## 📋 Descripción de los Programas
+
+El proyecto se divide en tres rutinas independientes que demuestran diferentes capacidades de programación y control:
+
+### 1. Programa 1: Trazado de Iniciales
+Genera trayectorias en URScript para simular el dibujo de las iniciales de los integrantes del grupo (A, H, A, C). 
+* **Características:** Uso de movimientos articulares (`movej`) con orientación fija para evitar singularidades y límites de articulaciones. Incluye mensajes emergentes (`popup`) antes de cada letra.
+
+### 2. Programa 2: Control Compartido con ROS 2
+Cede el control del robot a un controlador externo (ROS 2) mediante el driver oficial.
+* **Características:** Activación de salidas digitales, mensajes de advertencia al operador, temporizadores (`sleep`) y un bucle de espera para mantener la conexión RTDE activa.
+* **Bono:** Incluye la configuración para planificar y ejecutar trayectorias usando **MoveIt 2** y **RViz 2**.
+
+### 3. Programa 3: Rutina de Pick and Place
+Simula una operación industrial de recogida y colocación de objetos.
+* **Características:** Secuencia de movimientos con puntos de aproximación (intermedios), activación/desactivación del efector final (salidas digitales) y sincronización con el operador mediante una entrada digital (DI) para reiniciar el ciclo.
