@@ -4,7 +4,7 @@ Este repositorio contiene la documentación, los scripts y los ejemplos desarrol
 
 ## 👥 Integrantes
 * Alejandra Calderon Zambrana
-* Andy Joel Herrera Mejía
+* Daniel Mondragón
 
 ## 📋 Estructura y Contenido del Repositorio
 
