@@ -1,4 +1,3 @@
-```markdown
 # Investigación y Aplicación en Coral NPU V2 (RISC-V Vectorial)
 
 En este repositorio guardamos toda la documentación, los códigos y los ejemplos que hicimos para probar y entender cómo funciona por dentro la arquitectura heterogénea de la **Coral NPU V2** (procesador RISC-V RV32 con unidad escalar/FPU, extensión vectorial RVV v1.0 y extensión matricial VME/Zvt).
@@ -40,9 +39,6 @@ Coral-Npu-Investigacion/
         ├── testbench_pipeline_img.py          ← testbench Cocotb: carga la foto en DTCM y arma el resultado
         ├── resultados_hw_zvt.npz              ← datos crudos extraídos de la memoria DTCM tras simular
         └── resultado_pipeline_propio.png      ← imagen final con las 6 etapas aplicadas
-
-```
-
 ---
 
 ## 📚 En qué orden revisar nuestros PDF (`docs/`)
