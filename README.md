@@ -1,4 +1,3 @@
-
 # Investigación y Aplicación en Coral NPU V2 (RISC-V Vectorial)
 
 En este repositorio almacenamos toda la documentación, los códigos y los ejemplos desarrollados para investigar, probar y comprender el funcionamiento interno de la arquitectura heterogénea de la **Coral NPU V2**.
@@ -212,14 +211,12 @@ En este primer ejercicio propio buscamos comprobar el funcionamiento de la unida
 
 Utilizamos un arreglo de ocho elementos al que le aplicamos dos operaciones:
 
-1. Suma de un sesgo o *bias* de valor \(b = 0.5\).
+1. Suma de un sesgo o *bias* de valor `b = 0.5`.
 2. Función de activación ReLU.
 
 La operación completa es:
 
-\[
-ReLU(x)=\max(0,x+b)
-\]
+**ReLU(x) = max(0, x + b)**
 
 El objetivo es sumar el sesgo a cada elemento y convertir en cero los resultados negativos.
 
@@ -267,9 +264,7 @@ Esta operación realiza una multiplicación vectorial con ampliación de los res
 
 Por ejemplo:
 
-\[
-3 \times 4 = 12
-\]
+**3 × 4 = 12**
 
 **Compilación:**
 
@@ -334,15 +329,11 @@ input_128x128.npy
 
 La imagen contiene:
 
-\[
-128 \times 128 = 16\,384 \text{ píxeles}
-\]
+**128 × 128 = 16 384 píxeles**
 
 Al utilizar un byte por píxel, ocupa:
 
-\[
-16\,384 \text{ bytes} = 16 \text{ KB}
-\]
+**16 384 bytes = 16 KB**
 
 Escogimos esta resolución para trabajar dentro de la capacidad de los 32 KB de memoria DTCM disponibles en la arquitectura, considerando también el espacio necesario para los demás búferes y variables del programa.
 
@@ -394,9 +385,7 @@ Una vez finalizada la ejecución del pipeline:
 
 La validación obtiene:
 
-\[
-\boxed{MSE = 0.0}
-\]
+**MSE = 0.0**
 
 Esto indica que los resultados obtenidos coinciden exactamente con los resultados de referencia de NumPy para las operaciones y los datos evaluados.
 
