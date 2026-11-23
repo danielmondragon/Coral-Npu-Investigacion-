@@ -1,4 +1,4 @@
-# Investigación y Aplicación en Coral NPU V2 (RISC-V Vectorial)
+# Investigación y Aplicación en Coral NPU V2
 
 En este repositorio almacenamos toda la documentación, los códigos y los ejemplos desarrollados para investigar, probar y comprender el funcionamiento interno de la arquitectura heterogénea de la **Coral NPU V2**.
 
