@@ -17,17 +17,21 @@ Bogotá D.C., Colombia.
 
 # 📋 Organización del repositorio
 
-Antes de revisar el esquema de carpetas, detallamos qué contiene cada archivo del repositorio.
+El repositorio está organizado en una carpeta principal de ejemplos y tres documentos PDF que reúnen el proceso de instalación, los ejercicios desarrollados y la investigación de la arquitectura.
 
-## Documentación (`docs/`)
+## Documentación
+
+Los siguientes documentos se encuentran directamente en la raíz del repositorio:
 
 | Archivo | Descripción |
 |---|---|
-| `01_Guia_Instalacion_CoralNPU.pdf` | Registra paso a paso cómo configuramos Linux/WSL2, el compilador LLVM para RISC-V, Bazel, Verilator, Cocotb y el repositorio `~/coralnpu`. |
-| `02_Informe_Ejemplos_CoralNPU.pdf` | Explica los ejercicios escalares, vectoriales y matriciales, la organización de datos en DTCM (32 KB), las comprobaciones manuales y las simulaciones con Verilator y Cocotb. |
-| `03_Documentacion_Completa_CoralNPU.pdf` | Reúne el análisis de la arquitectura interna de Coral NPU V2, memorias ITCM y DTCM, buses IBus, DBus y AXI4, rutas de compilación ELF bare-metal y MLIR/IREE, y auditoría de binarios con LLVM. |
+| Guía de instalación de dependencias (`Coral_NPU__Guía_de_Instalación_de_Depen...`) | Registra paso a paso cómo configuramos Linux/WSL2, el compilador LLVM para RISC-V, Bazel, Verilator, Cocotb y el repositorio `~/coralnpu`. |
+| `Informe_Coral_Npu.pdf` | Reúne la documentación y el análisis técnico de la arquitectura Coral NPU, sus unidades de procesamiento, memorias, buses y herramientas de desarrollo. |
+| `Informe_Ejemplos_Coral_Npu (2).pdf` | Explica los ejercicios escalares, vectoriales y matriciales, la organización de datos en DTCM (32 KB), las comprobaciones manuales y las simulaciones con Verilator y Cocotb. |
 
-## Ejemplos generales (`examples/`)
+## Ejemplos (`Examples__/`)
+
+Esta carpeta contiene los códigos fuente, las cabeceras, los archivos de compilación y los testbench desarrollados durante la investigación.
 
 | Archivo | Descripción |
 |---|---|
@@ -42,7 +46,7 @@ Antes de revisar el esquema de carpetas, detallamos qué contiene cada archivo d
 | `coralnpu_v2_matrix_mac_dot.cc` | Ejercicio propio P3 que calcula un producto punto matricial 4 × 4 mediante operaciones MAC y la extensión matricial VME/Zvt. |
 | `zvt_matrix_mac_test.py` | Testbench de Cocotb y Verilator para P3 que valida los resultados en DTCM e inspecciona las instrucciones Zvt en el ensamblador. |
 
-## Proyecto final (`examples/mi_proyecto_npu/`)
+## Proyecto final (`Examples__/mi_proyecto_npu/`)
 
 | Archivo | Descripción |
 |---|---|
@@ -61,12 +65,11 @@ Coral-Npu-Investigacion/
 │
 ├── README.md
 │
-├── docs/
-│   ├── 01_Guia_Instalacion_CoralNPU.pdf
-│   ├── 02_Informe_Ejemplos_CoralNPU.pdf
-│   └── 03_Documentacion_Completa_CoralNPU.pdf
+├── Coral_NPU__Guía_de_Instalación_de_Dependencias.pdf
+├── Informe_Coral_Npu.pdf
+├── Informe_Ejemplos_Coral_Npu (2).pdf
 │
-└── examples/
+└── Examples__/
     ├── BUILD.bazel
     ├── coralnpu_math.h
     ├── hello_world_add_floats.cc
@@ -92,11 +95,11 @@ Coral-Npu-Investigacion/
 
 # 📚 Documentación del proyecto
 
-Los tres documentos PDF están organizados para leerse en orden, desde la instalación del entorno hasta el análisis completo de la arquitectura.
+Los tres documentos PDF están organizados para leerse en orden, desde la instalación del entorno hasta el análisis de la arquitectura y los ejercicios desarrollados.
 
 ## 01. Guía de instalación
 
-**Archivo:** `01_Guia_Instalacion_CoralNPU.pdf`
+**Documento:** Guía de instalación de dependencias.
 
 En este documento registramos el procedimiento que seguimos para instalar y configurar el entorno de desarrollo en Linux mediante WSL2.
 
@@ -109,11 +112,11 @@ Incluye:
 - Instalación y configuración de Cocotb.
 - Preparación del repositorio principal de Coral NPU.
 
-> **Importante:** Para ejecutar nuestros códigos, es necesario tener el repositorio principal de Coral NPU ubicado en `~/coralnpu`, respetando las rutas y configuraciones descritas en la guía.
+> **Importante:** Para ejecutar nuestros códigos, es necesario tener el repositorio principal de Coral NPU ubicado en `~/coralnpu`, respetando las rutas y configuraciones descritas en la guía de instalación.
 
 ## 02. Informe de ejemplos
 
-**Archivo:** `02_Informe_Ejemplos_CoralNPU.pdf`
+**Archivo:** `Informe_Ejemplos_Coral_Npu (2).pdf`
 
 En este documento explicamos los ejercicios que desarrollamos para comprender las tres unidades principales de procesamiento de la Coral NPU V2:
 
@@ -130,9 +133,9 @@ También incluimos:
 - Comprobaciones matemáticas realizadas manualmente.
 - Comparaciones de los resultados obtenidos por hardware frente a Python/NumPy.
 
-## 03. Documentación completa
+## 03. Informe Coral NPU
 
-**Archivo:** `03_Documentacion_Completa_CoralNPU.pdf`
+**Archivo:** `Informe_Coral_Npu.pdf`
 
 Este documento reúne la investigación técnica sobre la arquitectura interna de la Coral NPU V2.
 
@@ -153,12 +156,12 @@ Incluye:
 
 # ⚙️ Preparación del entorno
 
-Para ejecutar nuestros ejemplos, primero debemos copiar los archivos de la carpeta `examples/` de este repositorio al directorio `examples/` del repositorio principal de Coral NPU.
+Para ejecutar nuestros ejemplos, primero debemos copiar los archivos de la carpeta `Examples__/` de este repositorio al directorio `examples/` del repositorio principal de Coral NPU.
 
-Desde la terminal de WSL2/Linux:
+Desde la terminal de WSL2/Linux, ubicados en la raíz de este repositorio:
 
 ```bash
-cp -r examples/* ~/coralnpu/examples/
+cp -r Examples__/* ~/coralnpu/examples/
 cd ~/coralnpu
 ```
 
@@ -311,7 +314,7 @@ De esta manera no solamente verificamos que el programa produzca los resultados 
 
 ## 5. Proyecto final P4 — Pipeline de visión de seis etapas
 
-**Directorio:** `examples/mi_proyecto_npu/`
+**Directorio:** `Examples__/mi_proyecto_npu/`
 
 Como integración final de la investigación, desarrollamos un proyecto que combina las tres unidades de procesamiento de la Coral NPU V2:
 
