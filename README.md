@@ -1,3 +1,4 @@
+
 # Investigación y Aplicación en Coral NPU V2 (RISC-V Vectorial)
 
 En este repositorio almacenamos toda la documentación, los códigos y los ejemplos desarrollados para investigar, probar y comprender el funcionamiento interno de la arquitectura heterogénea de la **Coral NPU V2**.
@@ -6,8 +7,8 @@ La plataforma integra un procesador RISC-V RV32 con unidad escalar/FPU, extensi�
 
 ## 👥 Integrantes
 
-- **Alejandra Calderón Zambrana**
-- **Daniel Esteban Mondragón Juez**
+- Alejandra Calderón Zambrana
+- Daniel Esteban Mondragón Juez
 
 **Departamento de Ingeniería Electrónica**  
 Escuela Colombiana de Ingeniería Julio Garavito  
@@ -15,9 +16,46 @@ Bogotá D.C., Colombia.
 
 ---
 
-## 📋 Organización del repositorio
+# 📋 Organización del repositorio
 
-Organizamos los archivos del proyecto de la siguiente manera:
+Antes de revisar el esquema de carpetas, detallamos qué contiene cada archivo del repositorio.
+
+## Documentación (`docs/`)
+
+| Archivo | Descripción |
+|---|---|
+| `01_Guia_Instalacion_CoralNPU.pdf` | Registra paso a paso cómo configuramos Linux/WSL2, el compilador LLVM para RISC-V, Bazel, Verilator, Cocotb y el repositorio `~/coralnpu`. |
+| `02_Informe_Ejemplos_CoralNPU.pdf` | Explica los ejercicios escalares, vectoriales y matriciales, la organización de datos en DTCM (32 KB), las comprobaciones manuales y las simulaciones con Verilator y Cocotb. |
+| `03_Documentacion_Completa_CoralNPU.pdf` | Reúne el análisis de la arquitectura interna de Coral NPU V2, memorias ITCM y DTCM, buses IBus, DBus y AXI4, rutas de compilación ELF bare-metal y MLIR/IREE, y auditoría de binarios con LLVM. |
+
+## Ejemplos generales (`examples/`)
+
+| Archivo | Descripción |
+|---|---|
+| `BUILD.bazel` | Define las reglas de compilación y simulación en Bazel para los ejemplos oficiales y propios. |
+| `coralnpu_math.h` | Cabecera base con definiciones, tipos y utilidades para las operaciones matriciales MAC/Zvt. |
+| `hello_world_add_floats.cc` | Ejemplo oficial O1 que realiza una suma escalar de números de punto flotante FP32. |
+| `rvv_add_intrinsic.cc` | Ejemplo oficial O2 que realiza una suma vectorial utilizando intrínsecos de la extensión RISC-V Vector (RVV). |
+| `o2_rvv_cocotb_test.py` | Testbench de Cocotb y Verilator que ejecuta y valida el ejemplo oficial O2. |
+| `coralnpu_v2_scalar_bias_relu.cc` | Ejercicio propio P1 que aplica un sesgo (bias) y la función de activación ReLU en FP32 sobre ocho elementos. |
+| `p1_scalar_cocotb_test.py` | Testbench de Cocotb que carga el binario de P1, lee la memoria DTCM y verifica la salida. |
+| `coralnpu_v2_rvv_quantized_scale.cc` | Ejercicio propio P2 que implementa un escalado cuantizado vectorial sobre 128 elementos `int8_t` ampliados a `int16_t` con RVV. |
+| `coralnpu_v2_matrix_mac_dot.cc` | Ejercicio propio P3 que calcula un producto punto matricial 4 × 4 mediante operaciones MAC y la extensión matricial VME/Zvt. |
+| `zvt_matrix_mac_test.py` | Testbench de Cocotb y Verilator para P3 que valida los resultados en DTCM e inspecciona las instrucciones Zvt en el ensamblador. |
+
+## Proyecto final (`examples/mi_proyecto_npu/`)
+
+| Archivo | Descripción |
+|---|---|
+| `BUILD` | Define las reglas de Bazel para compilar y probar el pipeline de visión de seis etapas. |
+| `main.cc` | Integra las tres unidades de procesamiento (escalar/FPU, vectorial RVV y matricial VME/Zvt) en el flujo de procesamiento de imagen. |
+| `coralnpu_math.h` | Contiene las funciones específicas para los filtros y etapas del pipeline de visión. |
+| `input_128x128.npy` | Almacena la imagen de entrada de 128 × 128 píxeles en escala de grises (16 KB), ajustada al espacio de DTCM. |
+| `testbench_pipeline_img.py` | Testbench en Python con Cocotb que inyecta la imagen en DTCM, ejecuta la simulación y reconstruye la imagen final. |
+| `resultados_hw_zvt.npz` | Guarda los arreglos numéricos extraídos de la memoria DTCM tras la simulación del hardware. |
+| `resultado_pipeline_propio.png` | Muestra la visualización final con las seis etapas del pipeline aplicadas. |
+
+## 🌳 Esquema de carpetas
 
 ```text
 Coral-Npu-Investigacion/
@@ -32,16 +70,12 @@ Coral-Npu-Investigacion/
 └── examples/
     ├── BUILD.bazel
     ├── coralnpu_math.h
-    │
     ├── hello_world_add_floats.cc
     ├── rvv_add_intrinsic.cc
     ├── o2_rvv_cocotb_test.py
-    │
     ├── coralnpu_v2_scalar_bias_relu.cc
     ├── p1_scalar_cocotb_test.py
-    │
     ├── coralnpu_v2_rvv_quantized_scale.cc
-    │
     ├── coralnpu_v2_matrix_mac_dot.cc
     ├── zvt_matrix_mac_test.py
     │
@@ -55,19 +89,15 @@ Coral-Npu-Investigacion/
         └── resultado_pipeline_propio.png
 ```
 
-### Descripción de las carpetas
-
-- **docs/**: contiene los tres documentos PDF que reúnen la investigación, instalación y resultados.
-- **examples/**: contiene los ejemplos oficiales y los ejercicios desarrollados durante la investigación.
-- **mi_proyecto_npu/**: contiene el proyecto final, en el que integramos las tres unidades de procesamiento para ejecutar un pipeline de visión sobre una imagen de 128 × 128 píxeles.
-
 ---
 
-## 📚 Documentación del proyecto
+# 📚 Documentación del proyecto
 
 Los tres documentos PDF están organizados para leerse en orden, desde la instalación del entorno hasta el análisis completo de la arquitectura.
 
-### 01. Guía de instalación — `01_Guia_Instalacion_CoralNPU.pdf`
+## 01. Guía de instalación
+
+**Archivo:** `01_Guia_Instalacion_CoralNPU.pdf`
 
 En este documento registramos el procedimiento que seguimos para instalar y configurar el entorno de desarrollo en Linux mediante WSL2.
 
@@ -80,15 +110,17 @@ Incluye:
 - Instalación y configuración de Cocotb.
 - Preparación del repositorio principal de Coral NPU.
 
-**Importante:** Para ejecutar nuestros códigos, es necesario tener el repositorio principal de Coral NPU ubicado en `~/coralnpu`, respetando las rutas y configuraciones descritas en la guía.
+> **Importante:** Para ejecutar nuestros códigos, es necesario tener el repositorio principal de Coral NPU ubicado en `~/coralnpu`, respetando las rutas y configuraciones descritas en la guía.
 
-### 02. Informe de ejemplos — `02_Informe_Ejemplos_CoralNPU.pdf`
+## 02. Informe de ejemplos
+
+**Archivo:** `02_Informe_Ejemplos_CoralNPU.pdf`
 
 En este documento explicamos los ejercicios que desarrollamos para comprender las tres unidades principales de procesamiento de la Coral NPU V2:
 
-1. Procesamiento escalar mediante la FPU.
-2. Procesamiento vectorial mediante RVV.
-3. Procesamiento matricial mediante VME/Zvt.
+- Procesamiento escalar mediante la FPU.
+- Procesamiento vectorial mediante RVV.
+- Procesamiento matricial mediante VME/Zvt.
 
 También incluimos:
 
@@ -99,7 +131,9 @@ También incluimos:
 - Comprobaciones matemáticas realizadas manualmente.
 - Comparaciones de los resultados obtenidos por hardware frente a Python/NumPy.
 
-### 03. Documentación completa — `03_Documentacion_Completa_CoralNPU.pdf`
+## 03. Documentación completa
+
+**Archivo:** `03_Documentacion_Completa_CoralNPU.pdf`
 
 Este documento reúne la investigación técnica sobre la arquitectura interna de la Coral NPU V2.
 
@@ -118,7 +152,7 @@ Incluye:
 
 ---
 
-## ⚙️ Preparación del entorno
+# ⚙️ Preparación del entorno
 
 Para ejecutar nuestros ejemplos, primero debemos copiar los archivos de la carpeta `examples/` de este repositorio al directorio `examples/` del repositorio principal de Coral NPU.
 
@@ -133,31 +167,31 @@ Es importante realizar este procedimiento después de haber configurado correcta
 
 ---
 
-## 🚀 Ejecución de los ejercicios
+# 🚀 Ejecución de los ejercicios
 
-### 1. Ejemplos oficiales base (O1 y O2)
+## 1. Ejemplos oficiales base (O1 y O2)
 
 Comenzamos utilizando dos ejemplos oficiales del repositorio para verificar el funcionamiento del compilador RISC-V, Bazel y el entorno de simulación.
 
-**O1 — Suma escalar de flotantes FP32**
+### O1 — Suma escalar de flotantes FP32
 
-Archivo: `hello_world_add_floats.cc`
+**Archivo:** `hello_world_add_floats.cc`
 
 Permite comprobar el funcionamiento del procesamiento escalar mediante operaciones con números de punto flotante de precisión simple (FP32).
 
-Compilación:
+**Compilación:**
 
 ```bash
 bazel build //examples:hello_world_add_floats
 ```
 
-**O2 — Suma vectorial mediante RVV**
+### O2 — Suma vectorial mediante RVV
 
-Archivo: `rvv_add_intrinsic.cc`
+**Archivo:** `rvv_add_intrinsic.cc`
 
 Utiliza intrínsecos de la extensión vectorial RISC-V para realizar operaciones sobre múltiples elementos en paralelo.
 
-Ejecución del testbench:
+**Ejecución del testbench:**
 
 ```bash
 bazel test --test_output=all //examples:o2_rvv_cocotb_test
@@ -168,20 +202,20 @@ bazel test --test_output=all //examples:o2_rvv_cocotb_test
 - Que Bazel finalice correctamente la compilación.
 - Que se generen los archivos ejecutables `.elf`, `.bin` y `.vmem`.
 - Que la simulación en Verilator termine con estado `PASS`.
-- Que la suma vectorial de los 1024 elementos produzca correctamente el resultado esperado: `1 + 6 = 7`.
+- Que la suma vectorial de los 1024 elementos produzca correctamente el resultado esperado: 1 + 6 = 7.
 
----
+## 2. Ejercicio propio P1 — Procesamiento escalar (Bias + ReLU)
 
-### 2. Ejercicio propio P1 — Procesamiento escalar (Bias + ReLU)
-
-Archivo: `coralnpu_v2_scalar_bias_relu.cc`
+**Archivo:** `coralnpu_v2_scalar_bias_relu.cc`
 
 En este primer ejercicio propio buscamos comprobar el funcionamiento de la unidad escalar y la FPU mediante operaciones con números de punto flotante FP32.
 
 Utilizamos un arreglo de ocho elementos al que le aplicamos dos operaciones:
 
-1. Suma de un sesgo o *Bias* de valor \(b = 0.5\).
-2. Función de activación ReLU:
+1. Suma de un sesgo o *bias* de valor \(b = 0.5\).
+2. Función de activación ReLU.
+
+La operación completa es:
 
 \[
 ReLU(x)=\max(0,x+b)
@@ -201,25 +235,23 @@ Los arreglos se almacenan directamente en la memoria DTCM, cuya dirección base 
 
 Desde Python utilizamos `lookup_symbol` y `read_word` para localizar y leer los datos almacenados en memoria.
 
-Vector de entrada:
+**Vector de entrada:**
 
 ```text
 [-2.5, 1.0, -0.5, 3.0, -4.0, 2.0, 0.0, -1.2]
 ```
 
-Vector de salida esperado:
+**Vector de salida esperado:**
 
 ```text
 [0.0, 1.5, 0.0, 3.5, 0.0, 2.5, 0.5, 0.0]
 ```
 
-La simulación obtiene el resultado esperado en aproximadamente `525.00 ns` de tiempo simulado y finaliza con estado `PASS`.
+La simulación obtiene el resultado esperado en aproximadamente 525.00 ns de tiempo simulado y finaliza con estado `PASS`.
 
----
+## 3. Ejercicio propio P2 — Procesamiento vectorial (Escalado cuantizado)
 
-### 3. Ejercicio propio P2 — Procesamiento vectorial (Escalado cuantizado)
-
-Archivo: `coralnpu_v2_rvv_quantized_scale.cc`
+**Archivo:** `coralnpu_v2_rvv_quantized_scale.cc`
 
 En este ejercicio buscamos aprovechar las instrucciones de la extensión vectorial RVV para procesar varios datos simultáneamente.
 
@@ -251,13 +283,11 @@ bazel build //examples:coralnpu_v2_rvv_quantized_scale
 - La configuración dinámica de la longitud vectorial mediante `vsetvl`.
 - El procesamiento de los datos en bloques vectoriales.
 - La ampliación de los resultados de 8 a 16 bits.
-- La correcta utilización de los registros vectoriales con `VLEN = 128`.
+- La correcta utilización de los registros vectoriales con VLEN = 128.
 
----
+## 4. Ejercicio propio P3 — Procesamiento matricial (MAC 4×4)
 
-### 4. Ejercicio propio P3 — Procesamiento matricial (MAC 4×4)
-
-Archivo: `coralnpu_v2_matrix_mac_dot.cc`
+**Archivo:** `coralnpu_v2_matrix_mac_dot.cc`
 
 En este tercer ejercicio buscamos probar las operaciones de multiplicación y acumulación (MAC) mediante la extensión matricial VME/Zvt.
 
@@ -284,11 +314,9 @@ El testbench realiza dos comprobaciones principales:
 
 De esta manera no solamente verificamos que el programa produzca los resultados correctos, sino también que se estén utilizando las instrucciones de la extensión matricial.
 
----
+## 5. Proyecto final P4 — Pipeline de visión de seis etapas
 
-### 5. Proyecto final P4 — Pipeline de visión de seis etapas
-
-Directorio: `examples/mi_proyecto_npu/`
+**Directorio:** `examples/mi_proyecto_npu/`
 
 Como integración final de la investigación, desarrollamos un proyecto que combina las tres unidades de procesamiento de la Coral NPU V2:
 
@@ -296,13 +324,13 @@ Como integración final de la investigación, desarrollamos un proyecto que comb
 - Unidad vectorial RVV.
 - Unidad matricial VME/Zvt.
 
-El sistema procesa una imagen en escala de grises de dimensiones **128 × 128 píxeles**, utilizando el archivo:
+El sistema procesa una imagen en escala de grises de dimensiones 128 × 128 píxeles, utilizando el archivo:
 
 ```text
 input_128x128.npy
 ```
 
-#### ¿Por qué utilizamos una imagen de 128 × 128?
+### ¿Por qué utilizamos una imagen de 128 × 128?
 
 La imagen contiene:
 
@@ -318,7 +346,7 @@ Al utilizar un byte por píxel, ocupa:
 
 Escogimos esta resolución para trabajar dentro de la capacidad de los 32 KB de memoria DTCM disponibles en la arquitectura, considerando también el espacio necesario para los demás búferes y variables del programa.
 
-#### Ejecución del proyecto
+### Ejecución del proyecto
 
 Desde el repositorio principal de Coral NPU:
 
@@ -326,7 +354,7 @@ Desde el repositorio principal de Coral NPU:
 bazel test --test_output=all //examples/mi_proyecto_npu:testbench_pipeline_img
 ```
 
-#### Funcionamiento de las seis etapas
+### Funcionamiento de las seis etapas
 
 El pipeline está compuesto por las siguientes etapas:
 
@@ -374,14 +402,14 @@ Esto indica que los resultados obtenidos coinciden exactamente con los resultado
 
 ---
 
-## 🛠️ Problemas frecuentes y soluciones
+# 🛠️ Problemas frecuentes y soluciones
 
-### 1. Desbordamiento de la memoria DTCM
+## 1. Desbordamiento de la memoria DTCM
 
 La Coral NPU V2 dispone de las siguientes memorias:
 
 | Memoria | Dirección base | Capacidad |
-|---|---|---:|
+|---|---|---|
 | ITCM | `0x00000000` | 8 KB |
 | DTCM | `0x00010000` | 32 KB |
 
@@ -389,7 +417,7 @@ Si aumentamos demasiado el tamaño de los arreglos o variables almacenados en la
 
 Por esta razón utilizamos imágenes de 128 × 128 píxeles, buscando mantener los datos y búferes dentro de la capacidad física de la DTCM.
 
-### 2. Error `ModuleNotFoundError` en Python
+## 2. Error ModuleNotFoundError en Python
 
 Si Python indica que falta algún módulo, debemos instalar las dependencias necesarias:
 
@@ -397,7 +425,7 @@ Si Python indica que falta algún módulo, debemos instalar las dependencias nec
 pip install numpy pillow matplotlib cocotb
 ```
 
-### 3. Verificar si realmente se utilizan instrucciones RVV o Zvt
+## 3. Verificar si realmente se utilizan instrucciones RVV o Zvt
 
 Para comprobar las instrucciones generadas por el compilador podemos utilizar `llvm-objdump`.
 
@@ -417,7 +445,7 @@ Estas herramientas permiten analizar el código máquina generado y comprobar qu
 
 ---
 
-## 🎯 Objetivo y resultados de la investigación
+# 🎯 Objetivo y resultados de la investigación
 
 El propósito de este trabajo fue comprender cómo se distribuye y ejecuta el procesamiento en una arquitectura heterogénea basada en RISC-V, identificando las diferencias entre las unidades escalar, vectorial y matricial.
 
@@ -433,4 +461,4 @@ Los resultados nos permitieron:
 - Inspeccionar los ejecutables para verificar las instrucciones generadas por el compilador.
 - Integrar las tres unidades de procesamiento en un pipeline de visión artificial.
 
-**Este repositorio reúne el proceso de investigación, los ejercicios desarrollados, las herramientas utilizadas y la implementación final realizada sobre la Coral NPU V2.**
+Este repositorio reúne el proceso de investigación, los ejercicios desarrollados, las herramientas utilizadas y la implementación final realizada sobre la Coral NPU V2.
